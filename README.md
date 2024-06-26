@@ -6,16 +6,12 @@ This project is a function app that stores and retrieves data for the Vocabulary
 
 To get started, you will need to have the following installed on your machine:
 
-- [Visual Studio Code](https://code.visualstudio.com/)
-- [Azure Functions Extension](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurefunctions)
-- [Azure Storage Explorer](https://azure.microsoft.com/en-us/features/storage-explorer/)
 - [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
+- [Azure Functions Core Tools](https://docs.microsoft.com/en-us/azure/azure-functions/functions-run-local)
 
 ## Prerequisites
 
 - An Azure account
-- An Azure Storage Account
-- An Azure Function App
 
 ## Installation
 
@@ -25,54 +21,7 @@ To get started, you will need to have the following installed on your machine:
     git clone https://github.com/globalpms/vocard-store-fa.git
     ```
 
-2. Open the project in Visual Studio Code
-
-    ```bash
-    cd vocard-store-fa
-    code .
-    ```
-
-3. Install the required extensions
-
-    - Azure Functions
-
-    ```bash
-    code --install-extension ms-azuretools.vscode-azurefunctions
-    ```
-
-    - Azure Storage
-
-        ```bash
-        code --install-extension ms-azuretools.vscode-azurestorage
-        ```
-
-4. Create a new Azure Function App
-
-    ```bash
-    az group create --name <resource-group-name> --location <location>
-    az storage account create --name <storage-account-name> --resource-group <resource-group-name> --location <location> --sku Standard_LRS
-    az functionapp create --resource-group <resource-group-name> --consumption-plan-location <location> --name <function-app-name> --storage-account <storage-account-name> --runtime dotnet
-    ```
-
-5. Create a new Azure Storage Account
-
-    ```bash
-    az storage account create --name <storage-account-name> --resource-group <resource-group-name> --location <location> --sku Standard_LRS
-    ```
-
-6. Update the `local.settings.json` file with the connection strings for the Azure Storage Account
-
-    ```json
-    {
-        "IsEncrypted": false,
-        "Values": {
-            "FUNCTIONS_WORKER_RUNTIME": "node",
-            "AzureWebJobsStorage": "UseDevelopmentStorage=true"
-        }
-    }
-    ```
-
-7. Run the project
+2. Run the project locally
 
     ```bash
     npm start
