@@ -12,8 +12,11 @@ To get started, you will need to have the following installed on your machine:
 ## Prerequisites
 
 - An Azure account
+- Azure CLI
+- Node.js 18.x or later
+- Azure Functions Core Tools 4.x
 
-## Installation
+## Running the Project
 
 1. Clone the repository
 
@@ -22,6 +25,21 @@ To get started, you will need to have the following installed on your machine:
     ```
 
 2. Run the project locally
+
+    Update the `local.settings.json` file with the following values:
+
+    ```json
+    {
+        "IsEncrypted": false,
+        "Values": {
+            "FUNCTIONS_WORKER_RUNTIME": "node",
+            "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+            "MODULE_TABLE_NAME": "<module table name>",
+        }
+    }
+    ```
+
+    Run the project using the following command:
 
     ```bash
     npm start
