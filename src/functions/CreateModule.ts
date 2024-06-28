@@ -1,6 +1,7 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
 import { TableClient } from "@azure/data-tables";
 import { Module } from "../models/module";
+import { v4 as uuidv4 } from 'uuid';
 
 export async function CreateModule(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     context.log(`Http function processed request for url "${request.url}"`);
@@ -18,7 +19,7 @@ export async function CreateModule(request: HttpRequest, context: InvocationCont
         }
         const entity = {
             partitionKey: "module",
-            rowKey: require('uuid').v4(),
+            rowKey: uuidv4(),
             name: module.name,
             description: module.description
         };

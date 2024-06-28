@@ -1,8 +1,6 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
 import { TableClient } from '@azure/data-tables';
-// Define the module interface
 
-// Define the GetModules function
 export async function GetModules(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     context.log(`Http function processed request for url "${request.url}"`);
     const connectionString = process.env.StorageConnectionString;
