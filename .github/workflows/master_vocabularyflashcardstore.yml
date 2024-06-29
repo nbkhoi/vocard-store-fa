@@ -60,4 +60,4 @@ jobs:
           app-name: 'vocabularyflashcardstore'
           slot-name: 'Production'
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_B882B5C0CCDE4B98939DC8D7A3B082A8 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_4041734EA73C414F9BF83F6DF20D38AE }}
