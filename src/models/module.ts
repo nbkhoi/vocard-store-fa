@@ -1,6 +1,8 @@
 
 export interface Module {
-    name: string;
-    description?: string;
+    partitionKey: string;
+    rowKey: string;
+    title: string;
+    //topics: string[];
 }
 

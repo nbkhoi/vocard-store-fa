@@ -1,19 +1,13 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
 import { TableClient } from '@azure/data-tables';
+import { StorageUtils } from "../libs/StorageUtils";
 
 export async function GetModules(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     context.log(`Http function processed request for url "${request.url}"`);
-    const connectionString = process.env.StorageConnectionString;
     const tableName = process.env.MODULE_TABLE_NAME || 'modules';
-    const client = TableClient.fromConnectionString(connectionString, tableName);
     try {
-        const modules = [];
-        const entities = client.listEntities();
-        for await (const entity of entities) {
-            console.log(entity);
-            modules.push(entity)
-        }
-        const modulesJson = JSON.stringify(modules);
+        const entities = await StorageUtils.listObjectsFromTableStorage(tableName);
+        const modulesJson = JSON.stringify(entities);
         return {
             status: 200,
             body: modulesJson
