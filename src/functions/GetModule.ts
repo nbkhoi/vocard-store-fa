@@ -5,7 +5,7 @@ export async function GetModule(request: HttpRequest, context: InvocationContext
     context.log(`Http function processed request for url "${request.url}"`);
     const tableName = process.env.MODULE_TABLE_NAME || 'modules';
     const partitionKey = request.query.get('partitionKey') || 'Modules';
-    const rowKey = request.query.get('rowKey');
+    const rowKey = request.query.get('moduleKey') || request.query.get('rowKey');
     if (!partitionKey || !rowKey) {
         return {
             status: 400,
