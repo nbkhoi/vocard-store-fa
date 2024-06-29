@@ -45,7 +45,7 @@ export async function ProcessBlob(string: string): Promise<[any, any, any]> {
 }
 
 app.storageBlob('PublishModule', {
-    path: 'modules/{name}',
+    path: `${process.env.BLOB_CONTAINER_NAME}/{name}`,
     connection: 'AzureWebJobsStorage',
     handler: PublishModule
 });
