@@ -4,7 +4,7 @@ import { StorageUtils } from "../libs/StorageUtils";
 export async function GetModule(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     context.log(`Http function processed request for url "${request.url}"`);
     const tableName = process.env.MODULE_TABLE_NAME || 'modules';
-    const partitionKey = request.query.get('partitionKey');
+    const partitionKey = request.query.get('partitionKey') || 'Modules';
     const rowKey = request.query.get('rowKey');
     if (!partitionKey || !rowKey) {
         return {
