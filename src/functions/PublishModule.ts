@@ -18,9 +18,10 @@ export async function ProcessBlob(string: string): Promise<[any, any, any]> {
         ...moduleWithoutTopics
         //topics: []
     };
+    const moduleKey = uuidv4()
     const tuples: [any, any, any] = [null, [], []];
     for (const topic of topics) {
-        //decoratedModule.topics.push(topic.title);
+        const topicKey = uuidv4()
         let cardCount = 0;
         for (const card of topic.cards) {
             const decoratedCard = {
@@ -28,7 +29,8 @@ export async function ProcessBlob(string: string): Promise<[any, any, any]> {
                 topic: topic.title,
                 ...card
             };
-            StorageUtils.createObjectInTableStorage('Cards', decoratedCard.topic, uuidv4(), decoratedCard);
+            const cardKey = uuidv4();
+            StorageUtils.createObjectInTableStorage('Cards', topicKey, cardKey, decoratedCard);
             cardCount++;
         };
         const { cards, ...topicWithhoutCards } = topic;
@@ -37,9 +39,9 @@ export async function ProcessBlob(string: string): Promise<[any, any, any]> {
             ...topicWithhoutCards,
             cardCount: cardCount
         };
-        StorageUtils.createObjectInTableStorage('Topics', decoratedTopic.module, decoratedTopic.title, decoratedTopic);
+        StorageUtils.createObjectInTableStorage('Topics', moduleKey, topicKey, decoratedTopic);
     }
-    StorageUtils.createObjectInTableStorage('Modules', 'Modules', decoratedModule.title, decoratedModule);
+    StorageUtils.createObjectInTableStorage('Modules', 'DEFAULT', moduleKey, decoratedModule);
 
     return tuples;
 }
