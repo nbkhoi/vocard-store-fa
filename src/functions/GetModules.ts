@@ -23,7 +23,8 @@ export async function GetModules(request: HttpRequest, context: InvocationContex
 };
 
 app.http('GetModules', {
-    methods: ['GET', 'POST'],
+    route: 'modules',
+    methods: ['GET'],
     authLevel: 'anonymous',
     handler: GetModules
 });

@@ -4,7 +4,7 @@ import { StorageUtils } from "../libs/StorageUtils";
 export async function GetCardsByTopic(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     context.log(`Http function processed request for url "${request.url}"`);
 
-    const topicKey = request.query.get('topicKey');
+    const topicKey = request.params.topicKey;
     if (!topicKey) {
         return {
             status: 400,
@@ -29,7 +29,8 @@ export async function GetCardsByTopic(request: HttpRequest, context: InvocationC
 };
 
 app.http('GetCardsByTopic', {
-    methods: ['GET', 'POST'],
+    route: 'topics/{topicKey}/cards',
+    methods: ['GET'],
     authLevel: 'anonymous',
     handler: GetCardsByTopic
 });

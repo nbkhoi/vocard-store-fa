@@ -4,7 +4,7 @@ import { StorageUtils } from "../libs/StorageUtils";
 export async function GetTopicsByModule(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     context.log(`Http function processed request for url "${request.url}"`);
 
-    const moduleKey = request.query.get('moduleKey');
+    const moduleKey = request.params.moduleKey;
     if (!moduleKey) {
         return {
             status: 400,
@@ -29,7 +29,8 @@ export async function GetTopicsByModule(request: HttpRequest, context: Invocatio
 };
 
 app.http('GetTopicsByModule', {
-    methods: ['GET', 'POST'],
+    route: 'modules/{moduleKey}/topics',
+    methods: ['GET'],
     authLevel: 'anonymous',
     handler: GetTopicsByModule
 });
