@@ -15,29 +15,40 @@ export async function ProcessBlob(string: string): Promise<[any, any, any]> {
     const blobJson = JSON.parse(string);
     const { topics, ...moduleWithoutTopics } = blobJson;
     const decoratedModule = {
-        ...moduleWithoutTopics
+        ...moduleWithoutTopics,
+        ordinal: 1,
+        accessTier: "community",
+        disabled: false,
         //topics: []
     };
     const moduleKey = uuidv4()
     const tuples: [any, any, any] = [null, [], []];
+    let topicOrdinals = 0;
     for (const topic of topics) {
         const topicKey = uuidv4()
-        let cardCount = 0;
+        let flashcardCount = 0;
+        topicOrdinals++;
         for (const card of topic.cards) {
+            flashcardCount++;
             const decoratedCard = {
                 module: decoratedModule.title,
                 topic: topic.title,
+                ordinal: flashcardCount,
+                accessTier: "community",
+                disabled: false,
                 ...card
             };
             const cardKey = uuidv4();
-            StorageUtils.createObjectInTableStorage('Cards', topicKey, cardKey, decoratedCard);
-            cardCount++;
+            StorageUtils.createObjectInTableStorage('Flashcards', topicKey, cardKey, decoratedCard);
         };
         const { cards, ...topicWithhoutCards } = topic;
         const decoratedTopic = {
             module: decoratedModule.title,
             ...topicWithhoutCards,
-            cardCount: cardCount
+            ordinal: topicOrdinals,
+            accessTier: "community",
+            disabled: false,
+            flashcardCount: flashcardCount
         };
         StorageUtils.createObjectInTableStorage('Topics', moduleKey, topicKey, decoratedTopic);
     }

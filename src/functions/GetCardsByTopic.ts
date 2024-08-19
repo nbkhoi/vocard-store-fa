@@ -12,7 +12,7 @@ export async function GetCardsByTopic(request: HttpRequest, context: InvocationC
         };
     }
     try {
-        const entities = await StorageUtils.listObjectsByPartitionFromTableStorage('Cards', topicKey);
+        const entities = await StorageUtils.listObjectsByPartitionFromTableStorage('Flashcards', topicKey);
         const cardsJson = JSON.stringify(entities);
         return {
             status: 200,

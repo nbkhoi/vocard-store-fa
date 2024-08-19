@@ -4,9 +4,8 @@ import { StorageUtils } from "../libs/StorageUtils";
 
 export async function GetModules(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     context.log(`Http function processed request for url "${request.url}"`);
-    const tableName = process.env.MODULE_TABLE_NAME || 'modules';
     try {
-        const entities = await StorageUtils.listObjectsFromTableStorage(tableName);
+        const entities = await StorageUtils.listObjectsFromTableStorage('Modules');
         const modulesJson = JSON.stringify(entities);
         return {
             status: 200,

@@ -17,7 +17,7 @@ export async function GetCardsByModule(request: HttpRequest, context: Invocation
         const cards = [];
         for (const topic of topics) {
             log(`Getting cards for topic ${topic.rowKey}`);
-            const topicCards = await StorageUtils.listObjectsByPartitionFromTableStorage('Cards', topic.rowKey);
+            const topicCards = await StorageUtils.listObjectsByPartitionFromTableStorage('Flashcards', topic.rowKey);
             cards.push(...topicCards);
         }
         const cardsJson = JSON.stringify(cards);
