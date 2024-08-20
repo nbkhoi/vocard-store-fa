@@ -5,7 +5,7 @@
 The base URL for the API is:
   
   ```PlainText
-  https://devflashcardmngtapifnapp.azurewebsites.net
+  https://devflashvocabapifnapp.azurewebsites.net
   ```
 
 ## Get Modules
