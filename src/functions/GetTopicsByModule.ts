@@ -1,6 +1,5 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
-import { StorageUtils } from "../libs/StorageUtils";
-
+import { TableStorageHelper } from "../libs/TableStorageHelper";
 export async function GetTopicsByModule(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     context.log(`Http function processed request for url "${request.url}"`);
 
@@ -12,7 +11,7 @@ export async function GetTopicsByModule(request: HttpRequest, context: Invocatio
         };
     }
     try {
-        const entities = await StorageUtils.listObjectsByPartitionFromTableStorage('Topics', moduleKey);
+        const entities = await TableStorageHelper.getEntitiesByPartitionKey('Topics', moduleKey);
         const topicsJson = JSON.stringify(entities);
         return {
             status: 200,

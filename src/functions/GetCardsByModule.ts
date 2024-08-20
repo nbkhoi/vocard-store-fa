@@ -1,8 +1,8 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
-import { StorageUtils } from "../libs/StorageUtils";
 import { log } from "console";
+import { TableStorageHelper } from "../libs/TableStorageHelper";
 
-export async function GetCardsByModule(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
+export async function GetFlashcardsByModule(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     context.log(`Http function processed request for url "${request.url}"`);
     const moduleKey = request.params.moduleKey;
 
@@ -13,31 +13,31 @@ export async function GetCardsByModule(request: HttpRequest, context: Invocation
         };
     }
     try {
-        const topics = await StorageUtils.listObjectsByPartitionFromTableStorage('Topics', moduleKey);
-        const cards = [];
+        const topics = await TableStorageHelper.getEntitiesByPartitionKey('Topics', moduleKey);
+        const flashcards = [];
         for (const topic of topics) {
-            log(`Getting cards for topic ${topic.rowKey}`);
-            const topicCards = await StorageUtils.listObjectsByPartitionFromTableStorage('Flashcards', topic.rowKey);
-            cards.push(...topicCards);
+            log(`Getting flashcards for topic ${topic.rowKey}`);
+            const topicFlashcards = await TableStorageHelper.getEntitiesByPartitionKey('Flashcards', topic.rowKey);
+            flashcards.push(...topicFlashcards);
         }
-        const cardsJson = JSON.stringify(cards);
+        const flashcardsJson = JSON.stringify(flashcards);
         
         return {
             status: 200,
-            body: cardsJson
+            body: flashcardsJson
         };
     } catch (error) {
         context.log(error.message);
         return {
             status: 500,
-            body: 'An error occurred while retrieving the cards'
+            body: 'An error occurred while retrieving the flashcards'
         };
     }
 };
 
-app.http('GetCardsByModule', {
-    route: 'modules/{moduleKey}/cards',
+app.http('GetFlashcardsByModule', {
+    route: 'modules/{moduleKey}/flashcards',
     methods: ['GET'],
     authLevel: 'anonymous',
-    handler: GetCardsByModule
+    handler: GetFlashcardsByModule
 });

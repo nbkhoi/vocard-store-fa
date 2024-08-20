@@ -1,60 +1,81 @@
 import { app, InvocationContext } from "@azure/functions";
-import { StorageUtils } from "../libs/StorageUtils";
 import { v4 as uuidv4 } from 'uuid';
+import { TableStorageHelper } from "../libs/TableStorageHelper";
 
 export async function PublishModule(blob: Buffer, context: InvocationContext): Promise<void> {
     context.log(`Storage blob function processed blob "${context.triggerMetadata.name}" with size ${blob.length} bytes`);
     // Read the blob content
     const blobContent = blob.toString('utf-8');
     // Parse the JSON content
-    const [module, topics, cards] = await ProcessBlob(blobContent);
+    await ProcessBlob(blobContent, context);
 }
 
 // Define an async function that processes the blob and returns tuple of three objects
-export async function ProcessBlob(string: string): Promise<[any, any, any]> {
+export async function ProcessBlob(string: string, context: InvocationContext): Promise<void> {
     const blobJson = JSON.parse(string);
     const { topics, ...moduleWithoutTopics } = blobJson;
-    const decoratedModule = {
+    const accessTier = moduleWithoutTopics.accessTier?? "commercial";
+    const moduleEntity = {
+        partitionKey: 'DEFAULT',
+        rowKey: uuidv4(),
         ...moduleWithoutTopics,
         ordinal: 1,
-        accessTier: "community",
+        accessTier: accessTier,
         disabled: false,
-        //topics: []
     };
-    const moduleKey = uuidv4()
-    const tuples: [any, any, any] = [null, [], []];
     let topicOrdinals = 0;
     for (const topic of topics) {
-        const topicKey = uuidv4()
-        let flashcardCount = 0;
         topicOrdinals++;
-        for (const card of topic.cards) {
-            flashcardCount++;
-            const decoratedCard = {
-                module: decoratedModule.title,
+        const accessTier = "community" === moduleEntity.accessTier || topicOrdinals === 1 ? "community" : "commercial";
+        const { cards, ...topicWithhoutCards } = topic;
+        const topicEntity = {
+            partitionKey: moduleEntity.rowKey,
+            rowKey: uuidv4(),
+            module: moduleWithoutTopics.title,
+            ...topicWithhoutCards,
+            ordinal: topicOrdinals,
+            accessTier: accessTier,
+            disabled: false,
+            flashcardCount: 0
+        };
+        for (const card of cards) {
+            const accessTier = "community" === topicEntity.accessTier || topicEntity.flashcardCount < 3 ? "community" : "commercial";
+            const flashcardEntity = {
+                partitionKey: topicEntity.rowKey,
+                rowKey: uuidv4(),
+                module: moduleWithoutTopics.title,
                 topic: topic.title,
-                ordinal: flashcardCount,
-                accessTier: "community",
+                ordinal: topicEntity.flashcardCount++,
+                accessTier: accessTier,
                 disabled: false,
                 ...card
             };
-            const cardKey = uuidv4();
-            StorageUtils.createObjectInTableStorage('Flashcards', topicKey, cardKey, decoratedCard);
+            try {
+                // context.log(`Processing flashcard: ${JSON.stringify(flashcardEntity)}`);
+                await TableStorageHelper.saveEntity('Flashcards', flashcardEntity);
+            } catch (error) {
+                context.error(error.message);
+                context.error(`Error processing flashcard: ${JSON.stringify(flashcardEntity)}`);
+                return;
+            }
         };
-        const { cards, ...topicWithhoutCards } = topic;
-        const decoratedTopic = {
-            module: decoratedModule.title,
-            ...topicWithhoutCards,
-            ordinal: topicOrdinals,
-            accessTier: "community",
-            disabled: false,
-            flashcardCount: flashcardCount
-        };
-        StorageUtils.createObjectInTableStorage('Topics', moduleKey, topicKey, decoratedTopic);
+        try {
+            // context.log(`Processing topic: ${JSON.stringify(topicEntity)}`);
+            await TableStorageHelper.saveEntity('Topics', topicEntity);
+        } catch (error) {
+            context.error(error.message);
+            context.error(`Error processing topic: ${JSON.stringify(topicEntity)}`);
+            return;
+        }
     }
-    StorageUtils.createObjectInTableStorage('Modules', 'DEFAULT', moduleKey, decoratedModule);
-
-    return tuples;
+    try {
+        context.log(`Processing module: ${JSON.stringify(moduleEntity)}`);
+        await TableStorageHelper.saveEntity('Modules', moduleEntity);
+    } catch (error) {
+        context.error(error.message);
+        context.error(`Error processing module: ${JSON.stringify(moduleEntity)}`);
+        return;
+    }
 }
 
 app.storageBlob('PublishModule', {

@@ -1,11 +1,9 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
-import { TableClient } from '@azure/data-tables';
-import { StorageUtils } from "../libs/StorageUtils";
-
+import { TableStorageHelper } from "../libs/TableStorageHelper";
 export async function GetModules(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     context.log(`Http function processed request for url "${request.url}"`);
     try {
-        const entities = await StorageUtils.listObjectsFromTableStorage('Modules');
+        const entities = await TableStorageHelper.listEntities('Modules');
         const modulesJson = JSON.stringify(entities);
         return {
             status: 200,
