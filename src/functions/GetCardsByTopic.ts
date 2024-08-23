@@ -1,7 +1,7 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
-import { StorageUtils } from "../libs/StorageUtils";
+import { TableStorageHelper } from "../libs/TableStorageHelper";
 
-export async function GetCardsByTopic(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
+export async function GetFlashcardsByTopic(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     context.log(`Http function processed request for url "${request.url}"`);
 
     const topicKey = request.params.topicKey;
@@ -12,25 +12,25 @@ export async function GetCardsByTopic(request: HttpRequest, context: InvocationC
         };
     }
     try {
-        const entities = await StorageUtils.listObjectsByPartitionFromTableStorage('Cards', topicKey);
-        const cardsJson = JSON.stringify(entities);
+        const entities = await TableStorageHelper.getEntitiesByPartitionKey('Flashcards', topicKey);
+        const flashcardsJson = JSON.stringify(entities);
         return {
             status: 200,
-            body: cardsJson
+            body: flashcardsJson
         };
 
     } catch (error) {
         context.log(error.message);
         return {
             status: 500,
-            body: 'An error occurred while retrieving the cards'
+            body: 'An error occurred while retrieving the flashcards'
         };
     }
 };
 
-app.http('GetCardsByTopic', {
-    route: 'topics/{topicKey}/cards',
+app.http('GetFlashcardsByTopic', {
+    route: 'topics/{topicKey}/flashcards',
     methods: ['GET'],
     authLevel: 'anonymous',
-    handler: GetCardsByTopic
+    handler: GetFlashcardsByTopic
 });
