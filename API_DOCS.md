@@ -4,8 +4,16 @@
 
 The base URL for the API is:
   
+- Development: 
+
   ```PlainText
   https://devflashvocabapifnapp.azurewebsites.net
+  ```
+
+- Production:
+
+  ```PlainText
+  https://prodflashvocabapifnapp.azurewebsites.net
   ```
 
 ## Get Modules
