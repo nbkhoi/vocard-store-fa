@@ -7,7 +7,7 @@ The base URL for the API is:
 - Development:
 
   ```PlainText
-  https://devflashvocabapifnapp.azurewebsites.net
+  https://devflashcardapifnapp.azurewebsites.net
   ```
 
 - Production:
