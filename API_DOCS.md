@@ -4,7 +4,7 @@
 
 The base URL for the API is:
   
-- Development: 
+- Development:
 
   ```PlainText
   https://devflashvocabapifnapp.azurewebsites.net
@@ -75,3 +75,11 @@ The base URL for the API is:
     deviceId: string;
   }
 - Response: boolean value indicating if the device is premium.
+
+## AI-powered Word Definition Generation
+
+- Endpoint: `GET /api/recommend-definitions`
+- Description: Generates word definitions using AI.
+- Query Parameters:
+  - `word`: The word for which definitions are to be generated.
+- Response: Array of JSON objects containing word definitions.
